@@ -15,7 +15,7 @@ def SE(x, x_, l):
 
 def cov(X, lam):
     kern = kernels.Kernels()
-    K = np.array([], dtype=np.float128)
+    K = np.array([])
     
     for i in range(np.size(X)):
         k = np.array([])
@@ -38,7 +38,7 @@ def drawGauss(X):
     
     u = np.random.normal(0, 1, (np.size(X), 1))
     
-    L = sc.linalg.cholesky(K)
+    L = cholesky(K)
     
     Y = m + np.dot(L, u)
     
@@ -54,7 +54,7 @@ def GP(X, Y):
 
 
 def main():
-    X = np.arange(0, 5, 0.01, dtype=np.float128)
+    X = np.arange(0, 5, 0.01)
     Y = foo(X)
     #print(X)
     #print(Y)
