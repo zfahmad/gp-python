@@ -27,7 +27,7 @@ class GaussianProcess():
         
         return Y
 
-    def posterior(self, X_):
+    def predict(self, X_):
         kern = kernels.Kernels()
         
         K_a = kern.kern_matrix(self.X, self.X, self.func, 0.00001)
@@ -60,9 +60,9 @@ def main():
     #X_ = np.sort(5 * np.random.rand(75, 1), axis=0)
     X_ = np.arange(0, 5, 0.05)
     
-    Y_1 = gp.posterior(X_)
-    Y_2 = gp.posterior(X_)
-    Y_3 = gp.posterior(X_)
+    Y_1 = gp.predict(X_)
+    Y_2 = gp.predict(X_)
+    Y_3 = gp.predict(X_)
     
     X_a = np.arange(0, 5, 0.01)
     Y_a = foo(0.75 * X_a)
