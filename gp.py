@@ -20,11 +20,12 @@ class GaussianProcess():
         self.func = cov
         self.plotting1d = False
         self.plotting2d = False
+        self.lam = 0.00001
 
 
     def drawGauss(self, X):
         kern = kernels.Kernels()
-        K = kern.kern_matrix(X, X, self.func, 0.00001)
+        K = kern.kern_matrix(X, X, self.func, self.lam)
         m = np.zeros((np.size(X), 1))
         u = np.random.normal(0, 1, (np.size(X), 1))
         L = cholesky(K)
@@ -36,10 +37,10 @@ class GaussianProcess():
     def predict(self, X_):
         kern = kernels.Kernels()
         
-        K_a = kern.kern_matrix(self.X, self.X, self.func, 0.1)
+        K_a = kern.kern_matrix(self.X, self.X, self.func, self.lam)
         K_b = kern.kern_matrix(self.X, X_, self.func)
         K_c = kern.kern_matrix(X_, self.X, self.func)
-        K_d = kern.kern_matrix(X_, X_, self.func, 0.1)
+        K_d = kern.kern_matrix(X_, X_, self.func, self.lam)
         
         m = np.dot(np.dot(K_c, np.linalg.inv(K_a)), self.Y)
         m = np.reshape(m, (np.size(m), 1))
@@ -87,38 +88,38 @@ def main():
 
     
     #X_ = np.sort(5 * np.random.rand(75, 1), axis=0)
-#    X_ = np.arange(0, 5, 0.05)
-#    
-#    Y_1 = gp.predict(X_)
-#    Y_2 = gp.predict(X_)
-#    Y_3 = gp.predict(X_)
-#    
-#    X_a = np.arange(0, 5, 0.01)
-#    Y_a = foo(0.75 * X_a)
-
-    #plt.plot(X_a, Y_a, ls="--", lw=2, alpha=0.5)
+    X_ = np.arange(0, 5, 0.05)
     
-#    plt.plot(X_, Y_1, lw=2, alpha=0.6)
-#    plt.plot(X_, Y_2, lw=2, alpha=0.6)
-#    plt.plot(X_, Y_3, lw=2, alpha=0.6)
-#    plt.plot(X, Y, "+", markersize=10, mew=2, color="black", alpha=1)
-#    plt.grid()
-#    plt.show()
-
-    X = np.sort(1.5 * np.random.rand(10, 2), axis=0)
-    #print(X)
-    Y = rosenbrock(X)
-
-    gp2 = GaussianProcess(X, Y, "sqr_exp")
-
-    X_ = np.vstack((np.arange(0, 1.5, 0.05), np.arange(0, 1.5, 0.05)))
-    X_ = X_.T
+    Y_1 = gp.predict(X_)
+    Y_2 = gp.predict(X_)
+    Y_3 = gp.predict(X_)
     
-    #print(X_)
+    X_a = np.arange(0, 5, 0.01)
+    Y_a = foo(0.75 * X_a)
 
-    Y_ = gp2.predict(X_)
-    print(Y_)
-    gp.plot2d(X_, Y_)
+    plt.plot(X_a, Y_a, ls="--", lw=2, alpha=0.5)
+   
+    plt.plot(X_, Y_1, lw=2, alpha=0.6)
+    plt.plot(X_, Y_2, lw=2, alpha=0.6)
+    plt.plot(X_, Y_3, lw=2, alpha=0.6)
+    plt.plot(X, Y, "+", markersize=10, mew=2, color="black", alpha=1)
+    plt.grid()
+    plt.show()
+
+#    X = np.sort(1.5 * np.random.rand(10, 2), axis=0)
+#    #print(X)
+#    Y = rosenbrock(X)
+#
+#    gp2 = GaussianProcess(X, Y, "sqr_exp")
+#
+#    X_ = np.vstack((np.arange(0, 1.5, 0.05), np.arange(0, 1.5, 0.05)))
+#    X_ = X_.T
+#    
+#    #print(X_)
+#
+#    Y_ = gp2.predict(X_)
+#    print(Y_)
+#    gp.plot2d(X_, Y_)
 
     
 main()
