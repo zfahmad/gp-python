@@ -9,35 +9,13 @@ from cholesky import cholesky
 def foo(X):
     Y = 0.5 * (np.sin(X**2) + np.sin(X) + (0.25 * X) - 0.5)
     return Y
-    
-def SE(x, x_, l):
-    return np.exp(-0.5 * (l**2) * ((x - x_)**2))
 
-def cov(X, lam):
-    kern = kernels.Kernels()
-    K = np.array([])
-    
-    for i in range(np.size(X)):
-        k = np.array([])
-        
-        for j in range(np.size(X)):
-            k = np.append(k, kern.sqr_exp(X[i], X[j]))
-        
-        if not np.size(K):
-            K = k
-        else:
-            K = np.vstack((K, k))
-    return K + lam * np.identity(np.size(K, axis=0))
     
 def drawGauss(X):
-    K = cov(X, 0.00001)
-    #print(K)
-    v, w = sc.linalg.eig(K)
-    #print(v)
+    kern = kernels.Kernels()
+    K = kern.kern_matrix(X, X, "sqr_exp", 0.00001)
     m = np.zeros((np.size(X), 1))
-    
     u = np.random.normal(0, 1, (np.size(X), 1))
-    
     L = cholesky(K)
     
     Y = m + np.dot(L, u)
@@ -54,7 +32,7 @@ def GP(X, Y):
 
 
 def main():
-    X = np.arange(0, 5, 0.01)
+    X = np.arange(0, 2, 0.01)
     Y = foo(X)
     #print(X)
     #print(Y)
