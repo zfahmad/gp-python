@@ -90,18 +90,20 @@ def main():
     #X_ = np.sort(5 * np.random.rand(75, 1), axis=0)
     X_ = np.arange(0, 5, 0.05)
     
-    Y_1 = gp.predict(X_)
-    Y_2 = gp.predict(X_)
-    Y_3 = gp.predict(X_)
+    # Y_1 = gp.predict(X_)
+    # Y_2 = gp.predict(X_)
+    # Y_3 = gp.predict(X_)
     
     X_a = np.arange(0, 5, 0.01)
     Y_a = foo(0.75 * X_a)
 
-    plt.plot(X_a, Y_a, ls="--", lw=2, alpha=0.5)
-   
-    plt.plot(X_, Y_1, lw=2, alpha=0.6)
-    plt.plot(X_, Y_2, lw=2, alpha=0.6)
-    plt.plot(X_, Y_3, lw=2, alpha=0.6)
+    plt.plot(X_a, Y_a, "--", color="black", lw=2, alpha=0.5)
+
+    for i in range(3):
+        Y_ = gp.predict(X_)
+        plt.plot(X_, Y_, lw=2, alpha=0.6)
+    # plt.plot(X_, Y_2, lw=2, alpha=0.6)
+    # plt.plot(X_, Y_3, lw=2, alpha=0.6)
     plt.plot(X, Y, "+", markersize=10, mew=2, color="black", alpha=1)
     plt.grid()
     plt.show()
