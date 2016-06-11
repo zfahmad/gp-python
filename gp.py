@@ -3,18 +3,8 @@ import scipy.interpolate
 import scipy.linalg
 from matplotlib import pyplot as plt
 import matplotlib.cm as cm
-
 import kernels
 from cholesky import cholesky
-
-
-def foo(X):
-    Y = 0.5 * (np.sin(X ** 2) + np.sin(X) + (0.25 * X) - 0.5)
-    return Y
-
-
-def rosenbrock(x):
-    return ((1 - x[:, 0]) ** 2) + 100 * ((x[:, 1] - x[:, 0] ** 2) ** 2)
 
 
 class GaussianProcess():
@@ -47,7 +37,6 @@ class GaussianProcess():
 
         m = np.dot(np.dot(K_c, np.linalg.inv(K_a)), self.Y)
         m = np.reshape(m, (np.size(m), 1))
-        # print(m)
 
         C = K_d - np.dot(np.dot(K_c, np.linalg.inv(K_a)), K_b)
 
@@ -84,52 +73,3 @@ class GaussianProcess():
         self.plotting2d = False
 
 
-def main():
-    # X = np.sort(5 * np.random.rand(5, 1), axis=0)
-    # Y = foo(0.75 * X)
-
-    # gp = GaussianProcess(X, Y, "sqr_exp")
-    #
-    # # X_ = np.sort(5 * np.random.rand(75, 1), axis=0)
-    # X_ = np.arange(0, 5, 0.05)
-    #
-    # # Y_1 = gp.predict(X_)
-    # # Y_2 = gp.predict(X_)
-    # # Y_3 = gp.predict(X_)
-    #
-    # X_a = np.arange(0, 5, 0.01)
-    # Y_a = foo(0.75 * X_a)
-    #
-    # plt.plot(X_a, Y_a, "--", color="black", lw=2, alpha=0.5)
-    #
-    # for i in range(3):
-    #     Y_ = gp.predict(X_)
-    #     plt.plot(X_, Y_, lw=2, alpha=0.6)
-    # # plt.plot(X_, Y_2, lw=2, alpha=0.6)
-    # # plt.plot(X_, Y_3, lw=2, alpha=0.6)
-    # plt.plot(X, Y, "+", markersize=10, mew=2, color="black", alpha=1)
-    # plt.grid()
-    # plt.show()
-
-
-    X = np.sort((2 * np.random.rand(25, 2)) - .5, axis=0)
-    # print(X)
-    Y = rosenbrock(X)
-
-    gp = GaussianProcess(X, Y, "sqr_exp")
-
-    X_ = np.vstack((np.arange(-.5, 1.5, 0.005), np.arange(-.5, 1.5, 0.005)))
-    X_ = X_.T
-
-    # print(X_)
-
-    X = np.sort((2 * np.random.rand(3000, 2)) - .5, axis=0)
-    Y = rosenbrock(X)
-
-    Y_ = gp.predict(X_)
-
-    gp.plot2d(X, Y)
-    gp.showPlots()
-
-
-#main()
