@@ -3,8 +3,20 @@ import scipy.interpolate
 import scipy.linalg
 from matplotlib import pyplot as plt
 import matplotlib.cm as cm
+
 import kernels
 from cholesky import cholesky
+
+
+def foo(X, noise=0):
+    Y = 0.5 * (np.sin(X ** 2) + np.sin(X) + (0.25 * X) - 0.5)
+    if noise:
+        Y += np.random.normal(0, noise, (np.size(Y, axis=0), 1))
+    return Y
+
+
+def rosenbrock(x):
+    return ((1 - x[:, 0]) ** 2) + 100 * ((x[:, 1] - x[:, 0] ** 2) ** 2)
 
 
 class GaussianProcess():
@@ -16,14 +28,9 @@ class GaussianProcess():
         self.plotting2d = False
         self.lam = 0.00001
 
-    def drawGauss(self, X):
-        kern = kernels.Kernels()
-        K = kern.kern_matrix(X, X, self.func, self.lam)
-        m = np.zeros((np.size(X), 1))
-        u = np.random.normal(0, 1, (np.size(X), 1))
-        L = cholesky(K)
-
-        Y = m + np.dot(L, u)
+    def drawGauss(self, m, K):
+        u = np.random.normal(0, 1, (np.size(K, axis=0), 1))
+        Y = m + np.dot(K, u)
 
         return Y
 
@@ -39,13 +46,32 @@ class GaussianProcess():
         m = np.reshape(m, (np.size(m), 1))
 
         C = K_d - np.dot(np.dot(K_c, np.linalg.inv(K_a)), K_b)
-
-        u = np.random.normal(0, 1, (np.size(X_, axis=0), 1))
         L = np.linalg.cholesky(C)
 
-        Y_ = m + np.dot(L, u)
+        return m, L
 
-        return Y_
+    def noisy_predict(self, X_, noise):
+        kern = kernels.Kernels()
+
+        K_a = kern.kern_matrix(self.X, self.X, self.func, self.lam, noise)
+        K_b = kern.kern_matrix(self.X, X_, self.func)
+        K_d = kern.kern_matrix(X_, X_, self.func, self.lam)
+
+        L = np.linalg.cholesky(K_a)
+        alpha = np.linalg.lstsq(L.T, np.linalg.lstsq(L, self.Y)[0])[0]
+        m = np.dot(K_b.T, alpha)
+
+        v = np.linalg.lstsq(L, K_b)[0]
+        var = K_d - np.dot(v.T, v)
+
+        sum_diag = 0
+        for i in range(np.size(L, axis=0)):
+            sum_diag += L[i,i]
+
+        mle = -(0.5) * (np.dot(self.Y.T, alpha)) - sum_diag - \
+              (np.size(self.X, axis=0) / 2) * np.log(2 * np.pi)
+
+        return m, var, mle
 
     def plot1d(self, X_, Y_):
         if not self.plotting2d:
