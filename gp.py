@@ -26,7 +26,7 @@ class GaussianProcess():
         self.func = cov
         self.plotting1d = False
         self.plotting2d = False
-        self.lam = 0.00001
+        self.lam = 0.0001
 
     def drawGauss(self, m, K):
         u = np.random.normal(0, 1, (np.size(K, axis=0), 1))
