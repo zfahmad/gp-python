@@ -98,14 +98,14 @@ plt.tick_params(axis='y',
                 right='off',
                 labelleft='off')
 
+fig = plt.figure()
+ax = fig.gca()
+
 plt.xlabel(r'$\mathcal{X}$', size=20)
 plt.ylabel(r'$f:\mathcal{X}\rightarrow\mathbb{R}$', size=20)
 
-plt.ylim(-2, 3)
-plt.xlim(-.1, 5.1)
-
-fig = plt.figure()
-ax = fig.gca()
+ax.set_ylim(-2, 3)
+ax.set_xlim(-.1, 5.1)
 
 ax.plot(X_, mini_Y, color='green', lw=2, alpha=0.7)  # Prediction
 ax.plot(X_obj, Y_obj, color="blue", ls="--", lw=1)  # Objective
@@ -162,6 +162,12 @@ for iteration in range(iterations):
 
     fig = plt.figure()
     ax = fig.gca()
+
+    plt.xlabel(r'$\mathcal{X}$', size=20)
+    plt.ylabel(r'$f:\mathcal{X}\rightarrow\mathbb{R}$', size=20)
+
+    ax.set_ylim(-2, 3)
+    ax.set_xlim(-.1, 5.1)
 
     ax.plot(X_, mini_Y, color='green', lw=2, alpha=0.7)
     ax.plot(X_obj, Y_obj, color="blue", ls="--", lw=1)

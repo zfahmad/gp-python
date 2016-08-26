@@ -3,6 +3,7 @@ import numpy as np
 import scipy.interpolate
 import scipy.linalg
 from matplotlib import pyplot as plt
+import cholesky as ch
 
 import kernels
 
@@ -39,7 +40,7 @@ class GaussianProcess():
         m = np.reshape(m, (np.size(m), 1))
 
         C = K_d - np.dot(np.dot(K_c, np.linalg.inv(K_a)), K_b)
-        L = np.linalg.cholesky(C)
+        L = ch.cholesky(C)
 
         return m, L
 
