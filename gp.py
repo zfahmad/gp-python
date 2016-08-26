@@ -1,22 +1,15 @@
+import matplotlib.cm as cm
 import numpy as np
 import scipy.interpolate
 import scipy.linalg
 from matplotlib import pyplot as plt
-import matplotlib.cm as cm
 
 import kernels
-from cholesky import cholesky
 
 
-def foo(X, noise=0):
-    Y = 0.5 * (np.sin(X ** 2) + np.sin(X) + (0.25 * X) - 0.5)
-    if noise:
-        Y += np.random.normal(0, noise, (np.size(Y, axis=0), 1))
-    return Y
-
-
-def rosenbrock(x):
-    return ((1 - x[:, 0]) ** 2) + 100 * ((x[:, 1] - x[:, 0] ** 2) ** 2)
+class AcquisitionFunctions():
+    def ucb(self, X, var, kappa=0.01):
+        return X + kappa * np.sqrt(var)
 
 
 class GaussianProcess():
@@ -26,7 +19,7 @@ class GaussianProcess():
         self.func = cov
         self.plotting1d = False
         self.plotting2d = False
-        self.lam = 0.0001
+        self.lam = 0.00001
 
     def drawGauss(self, m, K):
         u = np.random.normal(0, 1, (np.size(K, axis=0), 1))
@@ -66,12 +59,16 @@ class GaussianProcess():
 
         sum_diag = 0
         for i in range(np.size(L, axis=0)):
-            sum_diag += L[i,i]
+            sum_diag += L[i, i]
 
-        mle = -(0.5) * (np.dot(self.Y.T, alpha)) - sum_diag - \
-              (np.size(self.X, axis=0) / 2) * np.log(2 * np.pi)
+        sum_mle = -(0.5) * (np.dot(self.Y.T, alpha)) - sum_diag - \
+                  (np.size(self.X, axis=0) / 2) * np.log(2 * np.pi)
 
-        return m, var, mle
+        mle = -(0.5) * self.Y * alpha - np.reshape(L.diagonal(),
+                                                   (np.size(L.diagonal()), 1)) - \
+              0.5 * np.log(2 * np.pi)
+
+        return m, var, mle, sum_mle
 
     def plot1d(self, X_, Y_):
         if not self.plotting2d:
@@ -97,5 +94,3 @@ class GaussianProcess():
         plt.show()
         self.plotting1d = False
         self.plotting2d = False
-
-
