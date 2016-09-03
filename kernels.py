@@ -5,7 +5,7 @@ except Exception as e:
 
 
 class Kernels():
-    def sqr_exp(self, x, x_, sig_var=1, l=1):
+    def sqr_exp(self, x, x_, sig_var=1.5, l=1):
         sq_dist = np.sqrt(np.sum((x - x_) ** 2))
         sq_dist = sq_dist ** 2
         k = sig_var * np.exp((-1 / (2 * l ** 2)) * sq_dist)

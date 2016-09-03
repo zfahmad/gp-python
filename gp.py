@@ -3,9 +3,10 @@ import numpy as np
 import scipy.interpolate
 import scipy.linalg
 from matplotlib import pyplot as plt
-import cholesky as ch
 
+import cholesky as ch
 import kernels
+import test_functions as tf
 
 
 class AcquisitionFunctions():
@@ -95,3 +96,67 @@ class GaussianProcess():
         plt.show()
         self.plotting1d = False
         self.plotting2d = False
+
+
+# X = np.sort(5 * np.random.rand(3, 1), axis=0)
+X = np.array([[.6], [2.1], [3.2], [4.4]])
+Y = tf.foo(0.75 * X)
+
+gp = GaussianProcess(X, Y, "sqr_exp")
+
+X_ = np.arange(0, 5.1, 0.1)
+
+m = np.array([])
+var = np.array([])
+for x in X_:
+    m_, var_, mle, sum_mle = gp.noisy_predict(np.array([x]), noise=0)
+    m = np.append(m, m_)
+    var = np.append(var, var_)
+
+m_ = np.reshape(m, (np.size(m), 1))
+
+ub = m + 1.966 * np.sqrt(var)
+lb = m - 1.966 * np.sqrt(var)
+
+kern = kernels.Kernels()
+K = kern.kern_matrix(X_, X_, "sqr_exp", lam=0.00001)
+m = np.zeros((np.size(K, axis=0), 1))
+#
+ub_ = np.zeros(np.size(X_)) + 2
+lb_ = np.zeros(np.size(X_)) - 2
+
+X_obj = np.arange(0, 5.05, 0.05)
+Y_obj = tf.foo(0.75 * X_obj)
+
+plt.xlabel(r"$x$", fontsize=32)
+plt.ylabel(r"$f(x)$", fontsize=32)
+plt.xticks([])
+
+plt.plot(X_obj, Y_obj, color="black", ls="--", lw=1)
+#
+#
+for i in range(3):
+    Y_ = gp.drawGauss(m, np.linalg.cholesky(K))
+    plt.plot(X_, Y_, lw=2, alpha=.6)
+# plt.grid()
+plt.fill_between(X_, ub_, lb_, color="lightgray", alpha=0.3)
+plt.ylim(-3, 3)
+plt.show()
+#
+for i in range(3):
+    m, L, mse, sum_mse = gp.noisy_predict(X_, noise=0)
+    Y_ = gp.drawGauss(m_, L)
+    plt.plot(X_, Y_, lw=2, alpha=.6)
+
+plt.plot(X, Y, "+", markersize=10, mew=2, color="black", alpha=1)
+plt.ylim(-3, 3)
+plt.fill_between(X_, ub, lb, color="lightgray", alpha=0.3)
+#
+# plt.plot(X_, m, color='black')
+plt.plot(X_obj, Y_obj, color="black", ls="--", lw=1)
+#
+# # plt.grid()
+plt.xlabel(r"$x$", fontsize=32)
+plt.ylabel(r"$f(x)$", fontsize=32)
+plt.xticks([])
+plt.show()

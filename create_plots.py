@@ -6,7 +6,7 @@ import numpy as np
 import gp as gauss
 import test_functions as tf
 
-iterations = 5
+iterations = 10
 
 dir = "./plots"
 
@@ -58,45 +58,45 @@ for j in range(30):
 
 # Create acquisition function
 
-A = ac.ucb(mini_Y, mini_mse, kappa=1)
+A = ac.ucb(mini_m, mini_mse, kappa=1)
 
 # Write files to store plot data for external use i.e. LaTeX
 
-f = open(dir + "/pre_0.txt", "w")
-g = open(dir + "/func.txt", "w")
-h = open(dir + "/acq_0.txt", "w")
-q = open(dir + "/points_0.txt", "w")
-
-for i in range(np.size(X_)):
-    f.write(str(X_[i]) + " " + str(mini_Y[i, 0]) + "\r")
-
-for i in range(np.size(X_obj)):
-    g.write(str(X_obj[i]) + " " + str(Y_obj[i]) + "\r")
-
-for i in range(np.size(X_)):
-    h.write(str(X_[i]) + " " + str(A[i, 0]) + "\r")
-
-for i in range(np.size(X)):
-    q.write(str(X[i, 0]) + " " + str(Y[i, 0]) + "\r")
-
-f.close()
-g.close()
-h.close()
-q.close()
+# f = open(dir + "/pre_0.txt", "w")
+# g = open(dir + "/func.txt", "w")
+# h = open(dir + "/acq_0.txt", "w")
+# q = open(dir + "/points_0.txt", "w")
+#
+# for i in range(np.size(X_)):
+#     f.write(str(X_[i]) + " " + str(mini_Y[i, 0]) + "\r")
+#
+# for i in range(np.size(X_obj)):
+#     g.write(str(X_obj[i]) + " " + str(Y_obj[i]) + "\r")
+#
+# for i in range(np.size(X_)):
+#     h.write(str(X_[i]) + " " + str(A[i, 0]) + "\r")
+#
+# for i in range(np.size(X)):
+#     q.write(str(X[i, 0]) + " " + str(Y[i, 0]) + "\r")
+#
+# f.close()
+# g.close()
+# h.close()
+# q.close()
 
 # Plot graphs
 
-plt.tick_params(axis='x',
-                which='both',
-                bottom='off',
-                top='off',
-                labelbottom='off')
-
-plt.tick_params(axis='y',
-                which='both',
-                left='off',
-                right='off',
-                labelleft='off')
+# plt.tick_params(axis='x',
+#                 which='both',
+#                 bottom='off',
+#                 top='off',
+#                 labelbottom='off')
+#
+# plt.tick_params(axis='y',
+#                 which='both',
+#                 left='off',
+#                 right='off',
+#                 labelleft='off')
 
 fig = plt.figure()
 ax = fig.gca()
@@ -107,13 +107,13 @@ plt.ylabel(r'$f:\mathcal{X}\rightarrow\mathbb{R}$', size=20)
 ax.set_ylim(-2, 3)
 ax.set_xlim(-.1, 5.1)
 
-ax.plot(X_, mini_Y, color='green', lw=2, alpha=0.7)  # Prediction
+ax.plot(X_, mini_m, color='green', lw=2, alpha=0.7)  # Prediction
 ax.plot(X_obj, Y_obj, color="blue", ls="--", lw=1)  # Objective
 ax.plot(X_, A, color="red", lw=2, ls="dotted", alpha=0.7)  # Acquisition
 ax.plot(X, Y, "o", markersize=8, color="blue", alpha=1)  # Samples
 
-plt.savefig(dir + "/gpo_0")
-
+# plt.savefig(dir + "/gpo_0")
+plt.show()
 # Iterations
 
 for iteration in range(iterations):
@@ -141,24 +141,24 @@ for iteration in range(iterations):
             mini_mse = mse
             mini_m = m
 
-    A = ac.ucb(mini_Y, mini_mse, kappa=1)
+    A = ac.ucb(mini_m, mini_mse, kappa=1)
 
-    f = open(dir + "/pre_" + str(iteration + 1) + ".txt", "w")
-    h = open(dir + "/acq_" + str(iteration + 1) + ".txt", "w")
-    q = open(dir + "/points_" + str(iteration + 1) + ".txt", "w")
-
-    for i in range(np.size(X_)):
-        f.write(str(X_[i]) + " " + str(mini_Y[i, 0]) + "\r")
-
-    for i in range(np.size(X_)):
-        h.write(str(X_[i]) + " " + str(A[i, 0]) + "\r")
-
-    for i in range(np.size(X)):
-        q.write(str(X[i, 0]) + " " + str(Y[i, 0]) + "\r")
-
-    f.close()
-    h.close()
-    q.close()
+    # f = open(dir + "/pre_" + str(iteration + 1) + ".txt", "w")
+    # h = open(dir + "/acq_" + str(iteration + 1) + ".txt", "w")
+    # q = open(dir + "/points_" + str(iteration + 1) + ".txt", "w")
+    #
+    # for i in range(np.size(X_)):
+    #     f.write(str(X_[i]) + " " + str(mini_Y[i, 0]) + "\r")
+    #
+    # for i in range(np.size(X_)):
+    #     h.write(str(X_[i]) + " " + str(A[i, 0]) + "\r")
+    #
+    # for i in range(np.size(X)):
+    #     q.write(str(X[i, 0]) + " " + str(Y[i, 0]) + "\r")
+    #
+    # f.close()
+    # h.close()
+    # q.close()
 
     fig = plt.figure()
     ax = fig.gca()
@@ -169,9 +169,10 @@ for iteration in range(iterations):
     ax.set_ylim(-2, 3)
     ax.set_xlim(-.1, 5.1)
 
-    ax.plot(X_, mini_Y, color='green', lw=2, alpha=0.7)
+    ax.plot(X_, mini_m, color='green', lw=2, alpha=0.7)
     ax.plot(X_obj, Y_obj, color="blue", ls="--", lw=1)
     ax.plot(X_, A, color="red", lw=2, ls="dotted", alpha=0.7)
     ax.plot(X, Y, "o", markersize=8, color="blue", alpha=1)
 
-    plt.savefig(dir + "/gpo_" + str(iteration + 1))
+    # plt.savefig(dir + "/gpo_" + str(iteration + 1))
+    plt.show()
